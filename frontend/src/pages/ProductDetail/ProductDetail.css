@@ -1,0 +1,15 @@
+.detail-container {
+  display: flex;
+  gap: 32px;
+  padding: 24px;
+}
+
+.detail-container img {
+  width: 60%;
+  object-fit: cover;
+}
+
+.detail-info h2 {
+  font-size: 28px;
+  margin-bottom: 12px;
+}

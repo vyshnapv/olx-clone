@@ -1,0 +1,27 @@
+const express=require("express");
+const cors=require("cors")
+const mongoose=require("mongoose")
+require("dotenv").config();
+
+const productRoutes=require("./routes/productRoutes")
+
+const app=express();
+app.use(cors());
+app.use(express.json());
+
+mongoose
+    .connect(process.env.MONGO_URI)
+    .then(()=>console.log("MongoDB connected"))
+    .catch((err)=>console.log(err))
+
+app.use("/api/products",productRoutes)
+
+app.get("/",(req,res)=>{
+    res.send("OLX Backend Running")
+});
+
+const PORT = process.env.PORT
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});

@@ -1,0 +1,20 @@
+.post-ad {
+  padding: 24px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.post-ad input,
+.post-ad textarea {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.post-ad button {
+  background: #002f34;
+  color: white;
+  padding: 12px;
+  width: 100%;
+}
