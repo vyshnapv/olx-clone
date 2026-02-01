@@ -1,6 +1,6 @@
 import {useState,useEffect} from "react";
 import axios from "axios";
-import Categories from "./Categories";
+import Categories from "../Categories/Categories";
 import ProductCard from "../../components/productCard/ProductCard";
 import "./Home.css"
 
