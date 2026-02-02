@@ -1,12 +1,14 @@
 import { useState } from "react";
-import axios from "axios"
+import axios from "axios";
+import API_BASE_URL from "../../config/api";
 import {useAuth} from "../../context/AuthContext"
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate  } from "react-router-dom";
 import "./PostAd.css"
 
 const PostAd=()=>{
     const {user}=useAuth();
     const { state } = useLocation();
+    const navigate=useNavigate()
 
     const [formData, setFormData] = useState({
       title: state?.title || "",
@@ -23,7 +25,18 @@ const PostAd=()=>{
     }
 
     const handleSubmit = async () => {
-      let imageUrl = state?.image;
+      try {
+        if (!state && !image) {
+            alert("Please select an image");
+            return;
+        }
+
+        if (!formData.title || !formData.price) {
+            alert("Please fill in all required fields");
+            return;
+        }
+
+        let imageUrl = state?.image;
 
         if (image) {
           const data = new FormData();
@@ -31,28 +44,32 @@ const PostAd=()=>{
           data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
 
           const cloudRes = await axios.post(
-           `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
             data
-        );
+          );
 
-      imageUrl = cloudRes.data.secure_url;
-    }
+          imageUrl = cloudRes.data.secure_url;
+        }
 
-     if (state) {
-        await axios.put(
-          `http://localhost:5000/api/products/${state._id}`,
-           { ...formData, image: imageUrl }
-        );
-      } else {
-        await axios.post("http://localhost:5000/api/products", {
-           ...formData,
-           image: imageUrl,
-           userId: user.uid,
-        });
+        if (state) {
+          await axios.put(
+            `${API_BASE_URL}/api/products/${state._id}`,
+            { ...formData, image: imageUrl }
+          );
+        } else {
+          await axios.post(`${API_BASE_URL}/api/products`, {
+            ...formData,
+            image: imageUrl,
+            userId: user.uid,
+          });
+        }
+
+        alert("Ad saved successfully");
+        navigate("/my-ads");
+      } catch (error) {
+        alert("Error saving ad: " + error.message);
       }
-
-     alert("Ad saved successfully");
-};
+  };
 
     return(
         <div className="post-ad">
@@ -65,6 +82,7 @@ const PostAd=()=>{
            <textarea
              name="description"
              placeholder="Description"
+             value={formData.description}
              onChange={handleChange}
            />
 

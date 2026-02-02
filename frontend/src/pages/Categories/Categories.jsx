@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import "./Categories.css";
 
 const categories = [
@@ -10,14 +11,23 @@ const categories = [
   "For Rent: Houses & Apartments"
 ];
 
-const Categories=()=>{
-    return(
+const Categories = () => {
+    const navigate = useNavigate();
+
+    const handleCategoryClick = (category) => {
+        navigate(`/?category=${encodeURIComponent(category)}`);
+    };
+
+    return (
         <div className="categories">
-          {categories.map((cat,index)=>(
-            <span key={index}>{cat}</span>
-          ))}
+            <span onClick={() => navigate("/")}>All Categories</span>
+            {categories.map((cat, index) => (
+                <span key={index} onClick={() => handleCategoryClick(cat)}>
+                    {cat}
+                </span>
+            ))}
         </div>
-    )
-}
+    );
+};
 
 export default Categories;

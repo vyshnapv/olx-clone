@@ -6,6 +6,11 @@ const Header=()=>{
     const {user,logout}=useAuth();
     const navigate=useNavigate()
 
+    const handleLogout = async () => {
+        await logout();
+        navigate("/login");
+    };
+
     return(
        <header className="olx-header">
           <div className="header-left">
@@ -33,7 +38,7 @@ const Header=()=>{
                   <span onClick={()=>navigate("/my-ads")}>
                     {user.email}
                   </span>
-                  <span onClick={logout}>Logout</span>
+                  <span onClick={handleLogout}>Logout</span>
                 </>
              ):(
                 <span
