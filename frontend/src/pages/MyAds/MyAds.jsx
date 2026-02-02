@@ -1,10 +1,12 @@
 import {useEffect,useState} from "react";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const MyAds=()=>{
     const {user}=useAuth();
     const [ads,setAds]=useState([]);
+    const navigate=useNavigate();
 
     const fetchAds=()=>{
         axios  

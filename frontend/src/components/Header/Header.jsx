@@ -31,7 +31,7 @@ const Header=()=>{
              {user ? (
                 <>
                   <span onClick={()=>navigate("/my-ads")}>
-                    {user.name}
+                    {user.email}
                   </span>
                   <span onClick={logout}>Logout</span>
                 </>

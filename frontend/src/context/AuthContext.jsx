@@ -16,9 +16,10 @@ export const AuthProvider=({children})=>{
         return ()=>unsub();
     },[])
 
-    const logout=()=>{
-        signOut(auth)
-    }
+    const logout = async () => {
+      await signOut(auth);
+      navigate("/login");
+    };
 
     return(
         <AuthContext.Provider value={{user,logout}}>

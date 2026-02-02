@@ -3,21 +3,39 @@ const cloudinary=require("../config/cloudinary")
 
 exports.createProduct=async(req,res)=>{
     try{
-       const {title,price,category,description,location,image,userId}=req.body;
+       console.log("Incoming product:", req.body);
 
-       const newProduct=await Product.create({
-        title,
-        price,
-        category,
-        description,
-        location,
-        image,
-        userId,
-       });
+       const {
+      title,
+      price,
+      category,
+      description,
+      location,
+      image,
+      userId,
+    } = req.body;
+
+
+     if (!title || !price || !image || !userId) {
+      return res.status(400).json({
+        message: "Missing required fields",
+      });
+    }
+
+    const newProduct = await Product.create({
+      title,
+      price,
+      category,
+      description,
+      location,
+      image,
+      userId,
+    });
 
       res.status(201).json(newProduct);
-    }catch(error){
-       res.status(500).json({message:error.message})
+    }catch (error) {
+    console.error("Create product error:", error);
+    res.status(500).json({ message: error.message });
     }
 }
 
@@ -56,6 +74,21 @@ exports.updateProduct = async (req, res) => {
       { new: true }
     );
     res.json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+exports.getSingleProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
