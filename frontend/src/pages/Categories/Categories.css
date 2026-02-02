@@ -1,18 +1,44 @@
 .categories {
+  position: fixed;
+  top: 100px; /* Position below the header */
+  width: 100%;
   display: flex;
   gap: 16px;
   padding: 16px 24px;
   overflow-x: auto;
   background: white;
   border-bottom: 1px solid #e0e0e0;
+  z-index: 999; /* Just below header */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
 }
 
 .categories span {
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
+  padding: 10px 20px;
+  border: 2px solid #d3d3d3;
+  border-radius: 8px;
+  background: #f8f8f8;
+  transition: all 0.3s ease;
+}
+
+.categories span.active {
+  background: #3a77ff;
+  color: white;
+  border-color: #3a77ff;
+  font-weight: 600;
 }
 
 .categories span:hover {
-  color: #3a77ff;
+  background: #3a77ff;
+  color: white;
+  border-color: #3a77ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(58, 119, 255, 0.3);
+}
+
+.categories span.active:hover {
+  background: #2a5fcf;
+  border-color: #2a5fcf;
 }

@@ -10,11 +10,15 @@ const Login=()=>{
     const navigate=useNavigate()
 
     const handleLogin=async()=>{
+       if (!email || !password) {
+         alert("Enter email and password");
+         return;
+       }
         try{
            await signInWithEmailAndPassword(auth,email,password)
            navigate("/")
         }catch(err){
-           alert(err.message)
+           alert("Invalid email or password")
         }
     }
     return(
@@ -29,12 +33,14 @@ const Login=()=>{
 
             <input
               placeholder="Email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
      
              <input
               type="password"
               placeholder="Password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
              />
 
@@ -42,13 +48,9 @@ const Login=()=>{
               Login
              </div>
 
-             <p
-               style={{ marginTop: "12px", cursor: "pointer", fontSize: "14px" }}
-               onClick={() => navigate("/signup")}
-             >
-               New to OLX? Create an account
+             <p onClick={() => navigate("/signup")}>
+                New to OLX? Create an account
              </p>
-
           </div>
         </div>
     )

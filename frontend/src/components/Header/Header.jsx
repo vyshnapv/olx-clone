@@ -1,5 +1,6 @@
 import { useAuth } from "../../context/AuthContext"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import olxLogo from "../../assets/OLX_New_Logo.png"
 import "./Header.css"
 
 const Header=()=>{
@@ -15,7 +16,7 @@ const Header=()=>{
        <header className="olx-header">
           <div className="header-left">
             <img 
-              src="https://statics.olx.in/external/base/img/olxLogo/olx-logo.png" 
+              src={olxLogo}
               alt="OLX" 
               className="olx-logo"
               onClick={()=>navigate("/")}
@@ -35,10 +36,10 @@ const Header=()=>{
           <div className="header-right">
              {user ? (
                 <>
-                  <span onClick={()=>navigate("/my-ads")}>
-                    {user.email}
+                  <span className="username">
+                    {user.displayName || user.email}
                   </span>
-                  <span onClick={handleLogout}>Logout</span>
+                  <span className="logout" onClick={logout}>Logout</span>
                 </>
              ):(
                 <span
