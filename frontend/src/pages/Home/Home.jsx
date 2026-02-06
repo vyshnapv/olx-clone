@@ -14,7 +14,7 @@ const Home=()=>{
 
      useEffect(() => {
         axios
-            .get(`${API_BASE_URL}/api/products`)
+            .get("/api/products")
             .then((res) => {
                 let filteredProducts = res.data;
                 
