@@ -1,97 +1,203 @@
-import { useState } from "react";
-import axios from "axios";
-import API_BASE_URL from "../../config/api";
-import {useAuth} from "../../context/AuthContext"
-import { useLocation,useNavigate  } from "react-router-dom";
-import "./PostAd.css"
+import { useState,useEffect } from "react";
+import axios from "../../config/axios"; // ✅ Use configured axios
+import { useNavigate ,useLocation} from "react-router-dom";
+import "./PostAd.css";
 
-const PostAd=()=>{
-    const {user}=useAuth();
-    const { state } = useLocation();
-    const navigate=useNavigate()
+const PostAd = () => {
+  const navigate = useNavigate();
+  const location=useLocation()
+  const editData=location.state;
 
-    const [formData, setFormData] = useState({
-      title: state?.title || "",
-      price: state?.price || "",
-      category: state?.category || "",
-      description: state?.description || "",
-      location: state?.location || "",
-    });
+  const [formData, setFormData] = useState({
+    title: "",
+    price: "",
+    category: "",
+    description: "",
+    location: "",
+  });
 
-    const [image,setImage]=useState(null);
+  const [image, setImage] = useState(null);
+  const [imagePreview,setImagePreview]=useState(null)
+  const [loading, setLoading] = useState(false);
 
-    const handleChange=(e)=>{
-      setFormData({...formData,[e.target.name]:e.target.value})
+  useEffect(() => {
+    if (editData) {
+      setFormData({
+        title: editData.title || "",
+        price: editData.price || "",
+        category: editData.category || "",
+        description: editData.description || "",
+        location: editData.location || "",
+      });
+      setImagePreview(editData.image);
     }
+  }, [editData]);
 
-    const handleSubmit = async () => {
-      try {
-        if (!state && !image) {
-            alert("Please select an image");
-            return;
-        }
-
-        if (!formData.title || !formData.price) {
-            alert("Please fill in all required fields");
-            return;
-        }
-
-        let imageUrl = state?.image;
-
-        if (image) {
-          const data = new FormData();
-          data.append("file", image);
-          data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
-
-          const cloudRes = await axios.post(
-            `https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
-            data
-          );
-
-          imageUrl = cloudRes.data.secure_url;
-        }
-
-        if (state) {
-          await axios.put(
-            `${API_BASE_URL}/api/products/${state._id}`,
-            { ...formData, image: imageUrl }
-          );
-        } else {
-          await axios.post(`${API_BASE_URL}/api/products`, {
-            ...formData,
-            image: imageUrl,
-            userId: user.uid,
-          });
-        }
-
-        alert("Ad saved successfully");
-        navigate("/my-ads");
-      } catch (error) {
-        alert("Error saving ad: " + error.message);
-      }
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-    return(
-        <div className="post-ad">
-           <h2>Post Your Ad</h2>
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
-           <input name="title" placeholder="Title" value={formData.title} onChange={handleChange}/>
-           <input name="price" placeholder="Price" value={formData.price} onChange={handleChange}/>
-           <input name="category" placeholder="Category" value={formData.category} onChange={handleChange}/>
-           <input name="location" placeholder="Location" value={formData.location} onChange={handleChange}/>
-           <textarea
-             name="description"
-             placeholder="Description"
-             value={formData.description}
-             onChange={handleChange}
-           />
+  const handleSubmit = async () => {
+    try {
+      if (!formData.title || !formData.price || !formData.category) {
+        alert("Please fill all required fields");
+        return;
+      }
 
-           <input type="file" onChange={(e)=>setImage(e.target.files[0])} />
+      if (!image && !editData) {
+        alert("Please select an image");
+        return;
+      }
 
-           <button onClick={handleSubmit}>Post Ad</button>
+      setLoading(true);
+
+      const data = new FormData();
+      Object.keys(formData).forEach((key) =>
+        data.append(key, formData[key])
+      );
+
+      if (image) {
+        data.append("image", image);
+      }
+
+     if (editData) {
+        // Update existing ad
+        await axios.put(`/api/products/${editData._id}`, data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        alert("Ad updated successfully");
+      } else {
+        // Create new ad
+        await axios.post("/api/products", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        alert("Ad posted successfully");
+      }
+
+      navigate("/my-ads");
+    } catch (error) {
+      alert(error.response?.data?.message || "Error saving ad");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="post-ad-wrapper">
+      <div className="post-ad">
+        <h2>{editData ? "Edit Your Ad" : "Post Your Ad"}</h2>
+
+        <div className="form-group">
+          <label>Title *</label>
+          <input
+            name="title"
+            placeholder="e.g., iPhone 13 Pro Max"
+            value={formData.title}
+            onChange={handleChange}
+          />
         </div>
-    )
-}
+
+        <div className="form-group">
+          <label>Price (₹) *</label>
+          <input
+            name="price"
+            type="number"
+            placeholder="e.g., 50000"
+            value={formData.price}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Category *</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              required
+            >
+             <option value="" disabled hidden>
+               Select Category
+             </option>
+             <option value="Cars">Cars</option>
+             <option value="Motorcycles">Motorcycles</option>
+             <option value="Mobile Phones">Mobile Phones</option>
+             <option value="For Sale: Houses & Apartments">
+               For Sale: Houses & Apartments
+             </option>
+             <option value="Commercial Vehicles">Commercial Vehicles</option>
+             <option value="For Rent: Houses & Apartments">
+              For Rent: Houses & Apartments
+             </option>
+            </select>
+        </div>
+
+        <div className="form-group">
+          <label>Location *</label>
+          <input
+            name="location"
+            placeholder="e.g., Mumbai, Maharashtra"
+            value={formData.location}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Description</label>
+          <textarea
+            name="description"
+            placeholder="Describe your item..."
+            value={formData.description}
+            onChange={handleChange}
+            rows="5"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Image {!editData && "*"}</label>
+          <input 
+            type="file" 
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+          {imagePreview && (
+            <div className="image-preview">
+              <img src={imagePreview} alt="Preview" />
+            </div>
+          )}
+        </div>
+
+        <button 
+          onClick={handleSubmit} 
+          disabled={loading}
+          className="submit-btn"
+        >
+          {loading ? "Saving..." : editData ? "Update Ad" : "Post Ad"}
+        </button>
+
+        <button 
+          onClick={() => navigate("/my-ads")} 
+          className="cancel-btn"
+          disabled={loading}
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default PostAd;
-

@@ -1,16 +1,36 @@
-import { useAuth } from "../../context/AuthContext"
-import { useNavigate } from "react-router-dom";
-import olxLogo from "../../assets/OLX_New_Logo.png"
-import "./Header.css"
+import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import olxLogo from "../../assets/OLX_New_Logo.png";
+import "./Header.css";
 
 const Header=()=>{
     const {user,logout}=useAuth();
     const navigate=useNavigate()
+    const [searchParams] = useSearchParams();
+
+    const [searchText, setSearchText] = useState(
+      searchParams.get("search") || ""
+    );
 
     const handleLogout = async () => {
-        await logout();
-        navigate("/login");
-    };
+    try {
+      await logout();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed");
+    }
+  };
+
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams);
+    if (searchText) {
+      params.set("search", searchText);
+    } else {
+      params.delete("search");
+    }
+    navigate(`/?${params.toString()}`);
+  };
 
     return(
        <header className="olx-header">
@@ -24,22 +44,30 @@ const Header=()=>{
 
             <div className="location-box">
                <span> 📍 </span>
-               <input placeholder="India" />
+               <input placeholder="India" readOnly/>
             </div>
           </div>
 
           <div className="header-center">
-             <input placeholder="Find Cars, Mobile Phones and more..." />
-             <button>🔍</button>
+           <input
+             placeholder="Find Cars, Mobile Phones and more..."
+             value={searchText}
+             onChange={(e) => setSearchText(e.target.value)}
+             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+           />
+           <button onClick={handleSearch}>🔍</button>
           </div>
 
           <div className="header-right">
              {user ? (
                 <>
                   <span className="username">
-                    {user.displayName || user.email}
+                    {user.name || user.email}
                   </span>
-                  <span className="logout" onClick={logout}>Logout</span>
+                  <span className="my-ads-link" onClick={() => navigate("/my-ads")}>
+                    My Ads
+                  </span>
+                  <span className="logout" onClick={handleLogout}>Logout</span>
                 </>
              ):(
                 <span

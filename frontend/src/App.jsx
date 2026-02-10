@@ -1,6 +1,6 @@
 import { Routes,Route } from "react-router-dom";
 import Header from "./components/Header/Header"
-import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
@@ -13,7 +13,6 @@ const App=()=>{
   return(
     <>
      <Header/>
-       <div style={{paddingTop:"68px"}}>
           <Routes>
              <Route path="/" element={<Home/>}/>
              <Route path="/login" element={<Login/>}/>
@@ -36,7 +35,6 @@ const App=()=>{
                  </ProtectedRoute>
                 }/>
           </Routes>
-       </div>
     </>
   )
 }

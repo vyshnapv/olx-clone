@@ -1,7 +1,7 @@
 .detail-wrapper {
     background: #f7f8f8;
-    min-height: calc(100vh - 68px);
-    padding: 24px;
+    min-height: 100vh;
+    padding: 140px 24px 40px 24px; /* Added TOP padding of 140px to clear the fixed header */
 }
 
 .detail-container {
@@ -35,6 +35,11 @@
 .detail-info h2 {
     font-size: 32px;
     margin-bottom: 12px;
+}
+
+.detail-info .producPrice h3 {
+    padding-top: 10px;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 
 .detail-info h3 {
@@ -76,6 +81,10 @@
 }
 
 @media (max-width: 768px) {
+    .detail-wrapper {
+        padding: 120px 16px 40px 16px;
+    }
+
     .detail-container {
         flex-direction: column;
     }

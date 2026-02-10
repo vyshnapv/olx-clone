@@ -1,47 +1,73 @@
+.my-ads-wrapper {
+    min-height: 100vh;
+    background: #f7f8f8;
+    padding: 140px 24px 40px 24px; /* Added TOP padding of 140px to clear the fixed header */
+}
+
 .my-ads-container {
-    padding: 24px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .my-ads-container h2 {
     margin-bottom: 24px;
-    font-size: 24px;
+    font-size: 28px;
+    color: #002f34;
 }
 
 .empty-state {
     text-align: center;
     padding: 60px 24px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .empty-state p {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     color: #7f9799;
+    font-size: 16px;
 }
 
 .empty-state button {
     background: #002f34;
     color: white;
-    padding: 12px 24px;
+    padding: 12px 32px;
     border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s;
+}
+
+.empty-state button:hover {
+    background: #004f58;
 }
 
 .ad-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    border: 1px solid #ddd;
-    padding: 16px;
+    gap: 20px;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
     margin-bottom: 16px;
     background: white;
-    border-radius: 4px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s;
+}
+
+.ad-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .ad-item img {
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
 }
 
 .ad-info {
@@ -49,13 +75,21 @@
 }
 
 .ad-info h3 {
-    font-size: 18px;
+    font-size: 20px;
     margin-bottom: 8px;
+    color: #002f34;
 }
 
 .ad-info .price {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
+    margin-bottom: 6px;
+    color: #002f34;
+}
+
+.ad-info .category {
+    font-size: 14px;
+    color: #7f9799;
     margin-bottom: 4px;
 }
 
@@ -67,13 +101,19 @@
 .ad-actions {
     display: flex;
     gap: 12px;
+    flex-direction: column;
 }
 
 .edit-btn,
 .delete-btn {
-    padding: 8px 16px;
+    padding: 10px 24px;
     border-radius: 4px;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s;
+    min-width: 100px;
 }
 
 .edit-btn {
@@ -81,12 +121,24 @@
     color: white;
 }
 
+.edit-btn:hover {
+    background: #004f58;
+}
+
 .delete-btn {
     background: #dc3545;
     color: white;
 }
 
+.delete-btn:hover {
+    background: #c82333;
+}
+
 @media (max-width: 768px) {
+    .my-ads-wrapper {
+        padding: 120px 16px 40px 16px;
+    }
+
     .ad-item {
         flex-direction: column;
         align-items: flex-start;
@@ -99,6 +151,7 @@
 
     .ad-actions {
         width: 100%;
+        flex-direction: row;
     }
 
     .edit-btn,

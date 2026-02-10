@@ -1,5 +1,9 @@
 const express=require("express");
+const isAuth=require("../middleware/authMiddleware")
+const upload=require("../middleware/upload")
+
 const router=express.Router();
+
  const { 
      createProduct,
      getAllProducts,
@@ -9,13 +13,11 @@ const router=express.Router();
      getSingleProduct,
  } = require("../controllers/productController")
 
-router.post("/",createProduct);
+router.post("/",isAuth,upload.single("image"),createProduct);
 router.get("/",getAllProducts);
-router.get("/user/:id",getUserProducts);
+router.get("/my-ads", isAuth, getUserProducts);
 router.get("/:id", getSingleProduct);
-router.delete("/:id",deleteProduct);
-router.put("/:id", updateProduct);
-
-
+router.delete("/:id",isAuth,deleteProduct);
+router.put("/:id",isAuth,upload.single("image"),updateProduct);
 
 module.exports=router;

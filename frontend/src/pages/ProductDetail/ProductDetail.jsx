@@ -1,31 +1,34 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import API_BASE_URL from "../../config/api";
+import axios from "../../config/axios"; // ✅ Use configured axios
 import "./ProductDetail.css";
 
-const ProductDetail=()=>{
-   const { id } = useParams();     
+const ProductDetail = () => {
+   const { id } = useParams();   
+
    const [product, setProduct] = useState(null);
    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-      axios.
-        get(`${API_BASE_URL}/api/products/${id}`)
-        .then((res) => {
+   useEffect(() => {
+     const fetchProduct = async () => {
+       try {
+          const res = await axios.get(`/api/products/${id}`); // ✅ Simplified
           setProduct(res.data);
+       } catch (error) {
+          console.error("Error fetching product:", error);
+          setProduct(null);
+       } finally {
           setLoading(false);
-        })
-         .catch(() => {
-          console.error("Error fetching product:", err);
-          setLoading(false);
-        });
-    }, [id]);
+       }
+     };
+
+     fetchProduct();
+   }, [id]);
 
     if (loading) return <div className="detail-container"><h2>Loading...</h2></div>;
     if (!product) return <div className="detail-container"><h2>Product not found</h2></div>;
 
-    return(
+    return (
          <div className="detail-wrapper">
             <div className="detail-container">
                 <div className="detail-left">
@@ -34,8 +37,10 @@ const ProductDetail=()=>{
 
                 <div className="detail-right">
                     <div className="detail-info">
-                        <h2>₹ {product.price?.toLocaleString()}</h2>
-                        <h3>{product.title}</h3>
+                        <h1>{product.title}</h1>
+                        <div className="producPrice">
+                           <h3>₹ {product.price?.toLocaleString()}</h3>
+                        </div>
                         <p className="category">{product.category}</p>
                         <p className="location">📍 {product.location}</p>
                     </div>
@@ -55,4 +60,4 @@ const ProductDetail=()=>{
     )
 }
 
-export default  ProductDetail;
+export default ProductDetail;

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useSearchParams } from "react-router-dom";
 import "./Categories.css";
 
 const categories = [
@@ -13,17 +13,28 @@ const categories = [
 
 const Categories = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    const activeCategory = searchParams.get("category");
 
     const handleCategoryClick = (category) => {
         navigate(`/?category=${encodeURIComponent(category)}`);
     };
 
+    const handleAllCategories = () => {
+    navigate("/");
+  };
+
     return (
         <div className="categories">
-            <span onClick={() => navigate("/")}>All Categories</span>
+            <span className={!activeCategory ? "active" : ""} onClick={handleAllCategories}>All Categories</span>
             {categories.map((cat, index) => (
-                <span key={index} onClick={() => handleCategoryClick(cat)}>
-                    {cat}
+                <span 
+                  key={index} 
+                  className={activeCategory === cat ? "active" : ""}
+                  onClick={() => handleCategoryClick(cat)}
+                >
+                  {cat}
                 </span>
             ))}
         </div>

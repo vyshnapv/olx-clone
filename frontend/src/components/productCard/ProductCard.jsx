@@ -6,20 +6,38 @@ const ProductCard=({product})=>{
    const navigate=useNavigate();
    const [imageError, setImageError] = useState(false);
 
+   const handleClick = () => {
+    navigate(`/product/${product._id}`);
+  };
+
    return(
-     <div
-       className="product-card"
-        onClick={() => navigate(`/product/${product._id}`, { state: product })}
-     >
+       <div
+         className="product-card"
+         onClick={handleClick}
+         role="button"
+         tabIndex={0}
+         onKeyDown={(e) => e.key === "Enter" && handleClick()}
+       >
        <img
-          src={imageError ? "https://via.placeholder.com/240x160?text=No+Image" : product.image}
-          alt={product.title}
-          onError={() => setImageError(true)}
+         src={
+           imageError || !product.image
+             ? "https://via.placeholder.com/240x160?text=No+Image"
+             : product.image
+         }
+         alt={product.title}
+         onError={() => setImageError(true)}
+         loading="lazy"
        />
        <div className="card-body">
-          <h3>₹ {product.price?.toLocaleString()}</h3>
-          <p>{product.title}</p>
-          <span>{product.location || "Location not specified"}</span>
+         <h3 className="price">
+           ₹ {product.price ? product.price.toLocaleString("en-IN") : "N/A"}
+         </h3>
+
+         <p className="title">{product.title}</p>
+
+         <span className="location">
+           {product.location || "Location not specified"}
+         </span>
        </div>
      </div>
    )

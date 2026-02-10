@@ -1,31 +1,35 @@
 import { useState } from "react";
-import { createUserWithEmailAndPassword,updateProfile  } from "firebase/auth";
-import { auth } from "../../firebase/firebase";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "./Signup.css";
 
 const Signup = () => {
+  const { signup } = useAuth(); 
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
 
   const handleSignup = async () => {
     if (!username || !email || !password) {
       alert("All fields are required");
       return;
     }
-    try {
-      const res=await createUserWithEmailAndPassword(auth, email, password);
 
-      await updateProfile(res.user, {
-        displayName: username,
+    try {
+      await signup({
+        name: username,
+        email,
+        password,
       });
 
-      navigate("/");
-
+      alert("Signup successful. Please login.");
+      navigate("/login");
     } catch (err) {
-      alert(err.message);
+      alert(
+        err.response?.data?.message || "Signup failed. Try again."
+      );
     }
   };
 
