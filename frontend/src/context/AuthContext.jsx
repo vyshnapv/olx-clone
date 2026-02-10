@@ -8,17 +8,19 @@ export const AuthProvider=({children})=>{
     const [loading,setLoading]=useState(true);
 
     useEffect(() => {
-    axios
-      .get("/api/auth/me")
-      .then((res) => {
-        setUser(res.data.user);
-        setLoading(false);
-      })
-      .catch(() => {
-        setUser(null);
-        setLoading(false);
-      });
-  }, []);
+       const checkAuth = async () => {
+            try {
+                const res = await axios.get("/api/auth/me");
+                setUser(res.data.user);
+            } catch (err) {
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        checkAuth();
+    }, []);
 
   const signup = (data) => axios.post("/api/auth/signup", data);
 

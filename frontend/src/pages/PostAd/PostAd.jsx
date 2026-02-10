@@ -1,5 +1,5 @@
 import { useState,useEffect } from "react";
-import axios from "../../config/axios"; // ✅ Use configured axios
+import axios from "../../config/axios";
 import { useNavigate ,useLocation} from "react-router-dom";
 import "./PostAd.css";
 
@@ -33,6 +33,14 @@ const PostAd = () => {
     }
   }, [editData]);
 
+  useEffect(() => {
+        return () => {
+            if (imagePreview && imagePreview.startsWith('blob:')) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        };
+    }, [imagePreview]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -40,6 +48,9 @@ const PostAd = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+            URL.revokeObjectURL(imagePreview);
+      }
       setImage(file);
       setImagePreview(URL.createObjectURL(file));
     }
@@ -69,7 +80,6 @@ const PostAd = () => {
       }
 
      if (editData) {
-        // Update existing ad
         await axios.put(`/api/products/${editData._id}`, data, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -77,7 +87,6 @@ const PostAd = () => {
         });
         alert("Ad updated successfully");
       } else {
-        // Create new ad
         await axios.post("/api/products", data, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -104,7 +113,7 @@ const PostAd = () => {
           <label>Title *</label>
           <input
             name="title"
-            placeholder="e.g., iPhone 13 Pro Max"
+            placeholder="Product Name..."
             value={formData.title}
             onChange={handleChange}
           />
@@ -115,7 +124,7 @@ const PostAd = () => {
           <input
             name="price"
             type="number"
-            placeholder="e.g., 50000"
+            placeholder="Price..."
             value={formData.price}
             onChange={handleChange}
           />
@@ -149,7 +158,7 @@ const PostAd = () => {
           <label>Location *</label>
           <input
             name="location"
-            placeholder="e.g., Mumbai, Maharashtra"
+            placeholder="Place..."
             value={formData.location}
             onChange={handleChange}
           />

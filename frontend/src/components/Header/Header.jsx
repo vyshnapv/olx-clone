@@ -19,18 +19,17 @@ const Header=()=>{
       navigate("/login");
     } catch (err) {
       console.error("Logout failed");
+      alert("Logout failed. Please try again.");
     }
   };
 
-  const handleSearch = () => {
-    const params = new URLSearchParams(searchParams);
-    if (searchText) {
-      params.set("search", searchText);
-    } else {
-      params.delete("search");
-    }
-    navigate(`/?${params.toString()}`);
-  };
+  const  handleSearch = () => {
+        if (searchText.trim()) {
+            navigate(`/?search=${encodeURIComponent(searchText.trim())}`);
+        } else {
+            navigate("/");
+        }
+    };
 
     return(
        <header className="olx-header">
@@ -40,6 +39,7 @@ const Header=()=>{
               alt="OLX" 
               className="olx-logo"
               onClick={()=>navigate("/")}
+              style={{ cursor: 'pointer' }}
             />
 
             <div className="location-box">

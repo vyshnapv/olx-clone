@@ -14,9 +14,7 @@ const ProductCard=({product})=>{
        <div
          className="product-card"
          onClick={handleClick}
-         role="button"
-         tabIndex={0}
-         onKeyDown={(e) => e.key === "Enter" && handleClick()}
+         style={{ cursor: 'pointer' }}
        >
        <img
          src={

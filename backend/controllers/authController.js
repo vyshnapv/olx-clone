@@ -4,6 +4,11 @@ const bcrypt=require("bcrypt")
 exports.signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already registered" });
@@ -23,7 +28,12 @@ exports.signup = async (req, res) => {
 };
 
 exports.login=async(req,res)=>{
+  try{
     const {email,password}=req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
 
     const user=await User.findOne({email});
     if(!user){
@@ -36,10 +46,31 @@ exports.login=async(req,res)=>{
     }
 
     req.session.userId=user._id;
-    res.json({message:"Login Successful",user})
-}
+    res.json({ 
+            message: "Login successful", 
+            user: {
+                _id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};
 
-exports.logout=(req,res)=>{
-    req.session.destroy();
-    res.json({message:"Logged Out"})
-}
+exports.logout = async (req, res) => {
+    try {
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Logout error:", err);
+                return res.status(500).json({ message: "Logout failed" });
+            }
+            res.json({ message: "Logged out successfully" });
+        });
+    } catch (error) {
+        console.error("Logout error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+};

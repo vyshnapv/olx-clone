@@ -2,25 +2,25 @@ const Product = require("../models/product");
 
 exports.createProduct = async (req, res) => {
     try {
-        const {
-           title,
-           price,
-           category,
-           description,
-           location,
-        } = req.body;
+        const { title, price, category, description, location } = req.body;
 
-        if (!title || !price || !req.file) {
+        if (!title || !price || !req.file || !location) {
            return res.status(400).json({
-             message: "Title, price and image are required",
+             message: "Title, price, category, and location are required",
            });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Image is required",
+            });
         }
 
         const newProduct = await Product.create({
             title,
             price,
             category,
-            description,
+            description:description || "",
             location,
             image: req.file.path,
             userId: req.session.userId,
@@ -125,18 +125,16 @@ exports.deleteProduct = async (req, res) => {
 
 exports.updateProduct = async (req, res) => {
   try {
-    const updateData = {
-      title: req.body.title,
-      price: req.body.price,
-      category: req.body.category,
-      description: req.body.description,
-      location: req.body.location,
-    };
+    const { title, price, category, description, location } = req.body;
 
-    Object.keys(updateData).forEach(
-      (key) => updateData[key] === undefined && delete updateData[key]
-    );
+    const updateData = {};
 
+    if (title) updateData.title = title;
+    if (price) updateData.price = price;
+    if (category) updateData.category = category;
+    if (description !== undefined) updateData.description = description;
+    if (location) updateData.location = location;
+    
     if (req.file) {
       updateData.image = req.file.path;
     }
